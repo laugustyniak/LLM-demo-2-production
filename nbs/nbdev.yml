@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "LLM-demo-2-production"
+  site-url: "https://laugustyniak.github.io/LLM-demo-2-production"
+  description: ""
+  repo-branch: main
+  repo-url: "https://github.com/laugustyniak/LLM-demo-2-production"
