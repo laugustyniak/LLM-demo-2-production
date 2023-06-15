@@ -161,12 +161,5 @@ cython_debug/
 
 .history
 docker-compose.local.yml
-_proc/_quarto.yml
-_proc/.gitignore
-_proc/00_core.ipynb
-_proc/index.ipynb
-_proc/nbdev.yml
-_proc/styles.css
-_proc/_docs/index.html
-_proc/_docs/robots.txt
-_proc/_docs/sitemap.xml
+_proc/
+LLM_demo_2_production/social_media_automator/.chainlit
