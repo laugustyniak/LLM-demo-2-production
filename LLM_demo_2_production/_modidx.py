@@ -10,4 +10,6 @@ d = { 'settings': { 'branch': 'main',
             'LLM_demo_2_production.chat_interfaces.mrkl': {},
             'LLM_demo_2_production.chat_interfaces.qa': {},
             'LLM_demo_2_production.llms_intro': { 'LLM_demo_2_production.llms_intro.get_completion': ( '00_social_media_automator/intro_to_llms.html#get_completion',
-                                                                                                       'LLM_demo_2_production/llms_intro.py')}}}
+                                                                                                       'LLM_demo_2_production/llms_intro.py'),
+                                                  'LLM_demo_2_production.llms_intro.get_completion_from_messages': ( '00_social_media_automator/intro_to_llms.html#get_completion_from_messages',
+                                                                                                                     'LLM_demo_2_production/llms_intro.py')}}}
