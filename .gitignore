@@ -163,3 +163,5 @@ cython_debug/
 docker-compose.local.yml
 _proc/
 LLM_demo_2_production/social_media_automator/.chainlit
+LLM_demo_2_production/chat_interfaces/.chainlit/.langchain.db
+LLM_demo_2_production/chat_interfaces/.chainlit/config.toml
