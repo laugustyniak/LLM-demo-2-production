@@ -1,14 +1,9 @@
-# Welcome to Chainlit! 🚀🤖
+# Welcome to Chainlit examples! 🚀🤖
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+This is a collection of examples of how to use Chainlit. 
 
-## Useful Links 🔗
+Please start with social media content generation example, running the following commands: 
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/ZThrUxbAYw) to ask questions, share your projects, and connect with other developers! 💬
-
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
-
-## Welcome screen
-
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+```bash
+OPENAI_API_KEY=sk-xxx chainlit run generate_sm_content.py -w 
+```
