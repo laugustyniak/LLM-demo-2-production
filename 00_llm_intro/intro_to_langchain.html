@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Guidelines for Prompting in Langchain.">
+
+<title>LLM-demo-2-production - Guidelines for Prompting in Langchain</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="LLM-demo-2-production - Guidelines for Prompting in Langchain">
+<meta property="og:description" content="Guidelines for Prompting in Langchain.">
+<meta property="og:site-name" content="LLM-demo-2-production">
+<meta name="twitter:title" content="LLM-demo-2-production - Guidelines for Prompting in Langchain">
+<meta name="twitter:description" content="Guidelines for Prompting in Langchain.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">LLM-demo-2-production</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../00_llm_intro/intro_to_llms.html">llm_intro</a></li><li class="breadcrumb-item"><a href="../00_llm_intro/intro_to_langchain.html">Guidelines for Prompting in Langchain</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Guidelines for Prompting in Langchain</h1>
+                  <div>
+        <div class="description">
+          <strong>Guidelines for Prompting in Langchain</strong>.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LLM-demo-2-production</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">llm_intro</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00_llm_intro/intro_to_llms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Guidelines for Prompting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00_llm_intro/intro_to_langchain.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Guidelines for Prompting in Langchain</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00_llm_intro/langchain_multichain_router.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MultiPromptChain Router</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00_llm_intro/langchain_agents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LangCahin Agents</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">langchain_snippets</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01_langchain_snippets/get_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting data for LLMs</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a>
+  <ul class="collapse">
+  <li><a href="#load-the-api-key-and-relevant-python-libaries." id="toc-load-the-api-key-and-relevant-python-libaries." class="nav-link" data-scroll-target="#load-the-api-key-and-relevant-python-libaries.">Load the API key and relevant Python libaries.</a></li>
+  </ul></li>
+  <li><a href="#chains" id="toc-chains" class="nav-link" data-scroll-target="#chains">Chains</a></li>
+  <li><a href="#langchain-memory" id="toc-langchain-memory" class="nav-link" data-scroll-target="#langchain-memory">LangChain: Memory</a>
+  <ul class="collapse">
+  <li><a href="#conversationbuffermemory" id="toc-conversationbuffermemory" class="nav-link" data-scroll-target="#conversationbuffermemory">ConversationBufferMemory</a></li>
+  </ul></li>
+  <li><a href="#conversationbufferwindowmemory" id="toc-conversationbufferwindowmemory" class="nav-link" data-scroll-target="#conversationbufferwindowmemory">ConversationBufferWindowMemory</a></li>
+  <li><a href="#conversationtokenbuffermemory" id="toc-conversationtokenbuffermemory" class="nav-link" data-scroll-target="#conversationtokenbuffermemory">ConversationTokenBufferMemory</a></li>
+  <li><a href="#conversationsummarymemory" id="toc-conversationsummarymemory" class="nav-link" data-scroll-target="#conversationsummarymemory">ConversationSummaryMemory</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/laugustyniak/LLM-demo-2-production/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<section id="load-the-api-key-and-relevant-python-libaries." class="level3">
+<h3 class="anchored" data-anchor-id="load-the-api-key-and-relevant-python-libaries.">Load the API key and relevant Python libaries.</h3>
+<p>If you use google colab please install the following packages:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="st">"langchain&gt;=0.0.200"</span> <span class="st">"pandas&gt;=1.5.3"</span> <span class="st">"panel&gt;=1.1.0"</span> <span class="st">"tiktoken&gt;=0.3.3"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ChatOpenAI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>chat <span class="op">=</span> ChatOpenAI(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># model="gpt-3.5-turbo-0613",</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-4"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    temperature<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># openai_api_key="sk-&lt;your key here&gt;"  # uncomment to use your own API key, othewise uses default .env key</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> ChatPromptTemplate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>paper_info <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">Massively Multilingual Corpus of Sentiment Datasets and Multi-faceted Sentiment Classification Benchmark</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">Łukasz Augustyniak, Szymon Woźniak, Marcin Gruza, Piotr Gramacki, Krzysztof Rajda, Mikołaj Morzy, Tomasz Kajdanowicz</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">Despite impressive advancements in multilingual corpora collection and model training, developing large-scale deployments of multilingual models still presents a significant challenge. This is particularly true for language tasks that are culture-dependent. One such example is the area of multilingual sentiment analysis, where affective markers can be subtle and deeply ensconced in culture. This work presents the most extensive open massively multilingual corpus of datasets for training sentiment models. The corpus consists of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria. The corpus covers 27 languages representing 6 language families. Datasets can be queried using several linguistic and functional features. In addition, we present a multi-faceted sentiment classification benchmark summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>template_string <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">Perform the following actions for a research paper text: </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">1 - Summarize the following text delimited by triple backticks with 1 sentence.</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">2 - Generate a title for this summary with emojis.</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">3 - Prepare a tweet thread with 3 tweets based on summary.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">4 - Prepare a longer linkedin post based on paper abstract. </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">Return a </span><span class="sc">{format_output}</span><span class="st"> with the following strcuture: summary, title, tweet, linkedin_post </span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">Text:</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="st">```</span><span class="sc">{text}</span><span class="st">```</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prompt_template <span class="op">=</span> ChatPromptTemplate.from_template(template_string)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>prompt_template</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>ChatPromptTemplate(input_variables=['text', 'format_output'], output_parser=None, partial_variables={}, messages=[HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['format_output', 'text'], output_parser=None, partial_variables={}, template='\nPerform the following actions for a research paper text: \n1 - Summarize the following text delimited by triple backticks with 1 sentence.\n2 - Generate a title for this summary with emojis.\n3 - Prepare a tweet thread with 3 tweets based on summary.\n4 - Prepare a longer linkedin post based on paper abstract. \n\nReturn a {format_output} with the following strcuture: summary, title, tweet, linkedin_post \n\nText:\n```{text}```\n', template_format='f-string', validate_template=True), additional_kwargs={})])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>prompt_template.input_variables</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['text', 'format_output']</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prompt_template.messages[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>HumanMessagePromptTemplate(prompt=PromptTemplate(input_variables=['format_output', 'text'], output_parser=None, partial_variables={}, template='\nPerform the following actions for a research paper text: \n1 - Summarize the following text delimited by triple backticks with 1 sentence.\n2 - Generate a title for this summary with emojis.\n3 - Prepare a tweet thread with 3 tweets based on summary.\n4 - Prepare a longer linkedin post based on paper abstract. \n\nReturn a {format_output} with the following strcuture: summary, title, tweet, linkedin_post \n\nText:\n```{text}```\n', template_format='f-string', validate_template=True), additional_kwargs={})</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>prompt_template.messages[<span class="dv">0</span>].prompt.input_variables</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['format_output', 'text']</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>paper_messages <span class="op">=</span> prompt_template.format_messages(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    text<span class="op">=</span>paper_info,  <span class="co"># text to be summarized</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    format_output<span class="op">=</span><span class="st">'python dict'</span>  <span class="co"># format of output to be returned from LLM</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>paper_messages</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[HumanMessage(content='\nPerform the following actions for a research paper text: \n1 - Summarize the following text delimited by triple backticks with 1 sentence.\n2 - Generate a title for this summary with emojis.\n3 - Prepare a tweet thread with 3 tweets based on summary.\n4 - Prepare a longer linkedin post based on paper abstract. \n\nReturn a python dict with the following strcuture: summary, title, tweet, linkedin_post \n\nText:\n```\nMassively Multilingual Corpus of Sentiment Datasets and Multi-faceted Sentiment Classification Benchmark\nŁukasz Augustyniak, Szymon Woźniak, Marcin Gruza, Piotr Gramacki, Krzysztof Rajda, Mikołaj Morzy, Tomasz Kajdanowicz\nDespite impressive advancements in multilingual corpora collection and model training, developing large-scale deployments of multilingual models still presents a significant challenge. This is particularly true for language tasks that are culture-dependent. One such example is the area of multilingual sentiment analysis, where affective markers can be subtle and deeply ensconced in culture. This work presents the most extensive open massively multilingual corpus of datasets for training sentiment models. The corpus consists of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria. The corpus covers 27 languages representing 6 language families. Datasets can be queried using several linguistic and functional features. In addition, we present a multi-faceted sentiment classification benchmark summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies.\n```\n', additional_kwargs={}, example=False)]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(paper_messages))</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(paper_messages[<span class="dv">0</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'list'&gt;
+&lt;class 'langchain.schema.HumanMessage'&gt;</code></pre>
+</div>
+</div>
+<p>Let’s make a first call to the API to check if everything is working.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>paper_social_media_summary <span class="op">=</span> chat(paper_messages)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We got not a raw string but an object from langchain.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>paper_social_media_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>AIMessage(content='{\n  "summary": "This research paper presents a massive multilingual corpus of sentiment datasets and a sentiment classification benchmark, covering 27 languages and 6 language families.",\n  "title": "🌍📚 Massively Multilingual Sentiment Analysis Corpus &amp; Benchmark 📈🌐",\n  "tweet": [\n    "🚀 Exciting new research presents a massive multilingual corpus of sentiment datasets, covering 27 languages and 6 language families! 🌍📚 #NLP #SentimentAnalysis",\n    "🔍 The corpus consists of 79 manually selected datasets from over 350 reported in scientific literature, based on strict quality criteria. 📊🧪 #DataScience #Multilingual",\n    "💡 Additionally, the paper introduces a multi-faceted sentiment classification benchmark, summarizing hundreds of experiments on different models, objectives, and strategies. 📈🌐 #MachineLearning #Benchmark"\n  ],\n  "linkedin_post": "🌍📚 Massively Multilingual Sentiment Analysis Corpus &amp; Benchmark 📈🌐\\n\\nA new research paper has been published, presenting the most extensive open massively multilingual corpus of datasets for training sentiment models. The corpus covers 27 languages representing 6 language families and consists of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria. This is a significant advancement in the field of multilingual sentiment analysis, which is often challenged by culture-dependent language tasks.\\n\\nIn addition to the corpus, the researchers also present a multi-faceted sentiment classification benchmark, summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies. This benchmark will serve as a valuable resource for researchers and practitioners working on multilingual sentiment analysis and natural language processing.\\n\\nRead the full paper here: [link to the paper]"\n}', additional_kwargs={}, example=False)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>paper_social_media_summary.content</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Summary: 🌍📊 This paper presents a massively multilingual corpus of sentiment datasets consisting of 79 manually selected datasets from over 350 reported in scientific literature, covering 27 languages and a multi-faceted sentiment classification benchmark summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies.\n\nTitle: 🌍📊 Massively Multilingual Corpus of Sentiment Datasets and Multi-faceted Sentiment Classification Benchmark\n\nTweet 1: 🌍📊 This paper presents a massively multilingual corpus of sentiment datasets covering 27 languages and a multi-faceted sentiment classification benchmark summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies. #sentimentanalysis #multilingual\n\nTweet 2: 📊 The corpus consists of 79 manually selected datasets from over 350 reported in scientific literature based on strict quality criteria, and datasets can be queried using several linguistic and functional features. #naturallanguageprocessing #datasets\n\nTweet 3: 🌍📈 The multi-faceted sentiment classification benchmark presented in this paper can be used to evaluate the performance of different sentiment analysis models and fine-tuning strategies. #machinelearning #benchmarking\n\nLinkedin Post: \nThis paper presents a massively multilingual corpus of sentiment datasets and a multi-faceted sentiment classification benchmark, which can be used to evaluate the performance of different sentiment analysis models and fine-tuning strategies. The corpus consists of 79 manually selected datasets from over 350 reported in scientific literature based on strict quality criteria, covering 27 languages representing 6 language families. Datasets can be queried using several linguistic and functional features. The multi-faceted sentiment classification benchmark summarizes hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies. This work is a significant contribution to the development of large-scale deployments of multilingual sentiment models, which still presents a significant challenge due to the culture-dependent nature of language tasks such as sentiment analysis. #sentimentanalysis #multilingual #naturallanguageprocessing #machinelearning #benchmarking'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>chat(prompt_template.format_messages(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    text<span class="op">=</span>paper_info,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    format_output<span class="op">=</span><span class="st">'markdown table'</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>AIMessage(content='| Summary | Title | Tweet | LinkedIn Post |\n| --- | --- | --- | --- |\n| This paper presents a massively multilingual corpus of sentiment datasets consisting of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria, covering 27 languages representing 6 language families, and a multi-faceted sentiment classification benchmark summarizing hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies. | 🌎📊👍 A Massive Multilingual Sentiment Corpus and Classification Benchmark | 1/3: Check out this paper presenting a massively multilingual corpus of sentiment datasets and a multi-faceted sentiment classification benchmark! 🌎📊👍 #multilingual #sentimentanalysis #corpus #classificationbenchmark | This paper presents a massively multilingual corpus of sentiment datasets and a multi-faceted sentiment classification benchmark, which can be useful for developing large-scale deployments of multilingual models, particularly for language tasks that are culture-dependent, such as multilingual sentiment analysis. The corpus consists of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria, covering 27 languages representing 6 language families. Datasets can be queried using several linguistic and functional features. The multi-faceted sentiment classification benchmark summarizes hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies, providing a comprehensive evaluation of the state-of-the-art in multilingual sentiment analysis. 🌎📊👍 #multilingual #sentimentanalysis #corpus #classificationbenchmark |\n| 2/3: The corpus covers 27 languages representing 6 language families and can be queried using several linguistic and functional features. 🌎📊👍 #multilingual #sentimentanalysis #corpus #classificationbenchmark | 3/3: The multi-faceted sentiment classification benchmark provides a comprehensive evaluation of the state-of-the-art in multilingual sentiment analysis. 🌎📊👍 #multilingual #sentimentanalysis #corpus #classificationbenchmark | This paper presents a massively multilingual corpus of sentiment datasets and a multi-faceted sentiment classification benchmark, which can be useful for developing large-scale deployments of multilingual models, particularly for language tasks that are culture-dependent, such as multilingual sentiment analysis. The corpus consists of 79 manually selected datasets from over 350 datasets reported in the scientific literature based on strict quality criteria, covering 27 languages representing 6 language families. Datasets can be queried using several linguistic and functional features. The multi-faceted sentiment classification benchmark summarizes hundreds of experiments conducted on different base models, training objectives, dataset collections, and fine-tuning strategies, providing a comprehensive evaluation of the state-of-the-art in multilingual sentiment analysis. The corpus covers 27 languages representing 6 language families and can be queried using several linguistic and functional features. The multi-faceted sentiment classification benchmark provides a comprehensive evaluation of the state-of-the-art in multilingual sentiment analysis. 🌎📊👍 #multilingual #sentimentanalysis #corpus #classificationbenchmark |', additional_kwargs={}, example=False)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="chains" class="level2">
+<h2 class="anchored" data-anchor-id="chains">Chains</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.llms <span class="im">import</span> OpenAI</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.prompts <span class="im">import</span> PromptTemplate</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> LLMChain</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="st">US and Canadian search teams are racing against time to find a tourist submarine that went missing during a dive to the Titanic's wreck on Sunday.</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="st">Five people were onboard when contact with the small sub was lost about an hour and 45 minutes into its dive.</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="st">The rescue operation is continuing overnight in the mid-Atlantic but there has been no sign so far of the vessel.</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="st">Government agencies, both countries' navies and commercial deep-sea firms are all helping the rescue operation.</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>do_whats <span class="op">=</span> [<span class="st">"summarize"</span>, <span class="st">"extract NERs"</span>, <span class="st">"extract keywords"</span>, <span class="st">"extract key sentences"</span>, <span class="st">"extract random words starting with 's'"</span>]</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    input_variables<span class="op">=</span>[<span class="st">"do_what"</span>, <span class="st">"text"</span>],</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    template<span class="op">=</span><span class="st">"Please </span><span class="sc">{do_what}</span><span class="st"> the following text: </span><span class="sc">{text}</span><span class="st">"</span>,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> OpenAI(temperature<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>chain <span class="op">=</span> LLMChain(llm<span class="op">=</span>llm, prompt<span class="op">=</span>prompt, verbose<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># llm</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chain</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(chain.run(do_what<span class="op">=</span><span class="st">"extract ner"</span>, text<span class="op">=</span>text))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+Please extract ner the following text: 
+US and Canadian search teams are racing against time to find a tourist submarine that went missing during a dive to the Titanic's wreck on Sunday.
+
+Five people were onboard when contact with the small sub was lost about an hour and 45 minutes into its dive.
+
+The rescue operation is continuing overnight in the mid-Atlantic but there has been no sign so far of the vessel.
+
+Government agencies, both countries' navies and commercial deep-sea firms are all helping the rescue operation.
+
+
+&gt; Finished chain.
+
+Person: Five people 
+Organization: US, Canadian, navies, commercial deep-sea firms 
+Location: mid-Atlantic</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> do_what <span class="kw">in</span> do_whats:</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Doing </span><span class="sc">{</span>do_what<span class="sc">}</span><span class="ss">..."</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(chain.run(do_what<span class="op">=</span>do_what, text<span class="op">=</span>text))</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"*"</span><span class="op">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Doing summarize...
+
+US and Canadian search teams are working urgently to find a tourist submarine that went missing during a dive near the Titanic's wreck site on Sunday, with five people onboard. Despite efforts from government agencies, navies and commercial deep-sea firms, there has been no sign of the vessel thus far. The rescue operation is continuing overnight in the mid-Atlantic.
+****************************************************************************************************
+Doing extract NERs...
+
+NERs: US, Canadian, tourist, submarine, Titanic, wreck, Five people, sub, mid-Atlantic, government agencies, both countries' navies, commercial deep-sea firms
+****************************************************************************************************
+Doing extract keywords...
+
+1. US 
+2. Canadian 
+3. Tourist Submarine 
+4. Titanic's Wreck 
+5. Dive 
+6. Five People 
+7. Mid-Atlantic 
+8. Government Agencies 
+9. Navies 
+10. Commercial Deep-Sea Firms
+****************************************************************************************************
+Doing extract key sentences...
+1. US and Canadian search teams are racing against time to find a tourist submarine that went missing during a dive to the Titanic's wreck on Sunday.
+2. Five people were onboard when contact with the small sub was lost about an hour and 45 minutes into its dive. 
+3. Government agencies, both countries' navies and commercial deep-sea firms are all helping the rescue operation.
+****************************************************************************************************
+Doing extract random words starting with 's'...
+
+Search, Sunday, Submarine, Sub, Submersible, Systematic, Studies, Spend, Supported, Scheduled, Salvage
+****************************************************************************************************
+22.1 s ± 0 ns per loop (mean ± std. dev. of 1 run, 1 loop each)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>tasks <span class="op">=</span> [chain.arun(do_what<span class="op">=</span>do_what, text<span class="op">=</span>text) <span class="cf">for</span> do_what <span class="kw">in</span> do_whats]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> asyncio.gather(<span class="op">*</span>tasks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_3555286/2562969474.py:2: RuntimeWarning: coroutine 'Chain.arun' was never awaited
+  tasks = [chain.arun(do_what=do_what, text=text) for do_what in do_whats]
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>["\nSearch teams from the US and Canada are racing against time to locate a tourist submarine with 5 people onboard that went missing during a dive to the Titanic's wreck on Sunday. The rescue operation is continuing overnight in the mid-Atlantic with the help of government agencies, both countries' navies and commercial deep-sea firms, but so far there has been no sign of the vessel.",
+ "\nNERs: US, Canadian, search teams, tourist submarine, dive, Titanic's wreck, Five people, small sub, mid-Atlantic, government agencies, both countries' navies, commercial deep-sea firms",
+ '\nKeywords: US, Canadian, search teams, tourist submarine, dive, Titanic, wreck, Sunday, five people, mid-Atlantic, government agencies, navies, commercial deep-sea firms, rescue operation',
+ "\n1. US and Canadian search teams are racing against time to find a tourist submarine that went missing during a dive to the Titanic's wreck on Sunday.\n2. Five people were onboard when contact with the small sub was lost about an hour and 45 minutes into its dive.\n3. Government agencies, both countries' navies and commercial deep-sea firms are all helping the rescue operation.",
+ "\nSearch, Sunday, submarine, small, sign, sub, Sunday's, governments, navies, commercial"]</code></pre>
+</div>
+</div>
+</section>
+<section id="langchain-memory" class="level2">
+<h2 class="anchored" data-anchor-id="langchain-memory">LangChain: Memory</h2>
+<p>One of the most common use cases for LLMs is to use it as a chatbot. However, LLMs are stateless hence there is no memory of previous calls to the API. We must create a memory for the LLM to be able to remember previous calls.</p>
+<section id="conversationbuffermemory" class="level3">
+<h3 class="anchored" data-anchor-id="conversationbuffermemory">ConversationBufferMemory</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chat_models <span class="im">import</span> ChatOpenAI</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.chains <span class="im">import</span> ConversationChain</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="fl">0.0</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferMemory()</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>conversation <span class="op">=</span> ConversationChain(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>llm, </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> memory,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Hi, my name is Łukasz"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+
+Human: Hi, my name is Łukasz
+AI:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrying langchain.chat_models.openai.ChatOpenAI.completion_with_retry.&lt;locals&gt;._completion_with_retry in 1.0 seconds as it raised ServiceUnavailableError: The server is overloaded or not ready yet..</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>"Hello Łukasz, it's nice to meet you! My name is AI. How can I assist you today?"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"What is the best joke ever?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+Human: Hi, my name is Łukasz
+AI: Hello Łukasz, it's nice to meet you! My name is AI. How can I assist you today?
+Human: What is the best joke ever?
+AI:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'That\'s a subjective question, as humor is different for everyone. However, one of the most popular jokes of all time is "Why did the chicken cross the road? To get to the other side!"'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"What is my name?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+Human: Hi, my name is Łukasz
+AI: Hello Łukasz, it's nice to meet you! My name is AI. How can I assist you today?
+Human: What is the best joke ever?
+AI: That's a subjective question, as humor is different for everyone. However, one of the most popular jokes of all time is "Why did the chicken cross the road? To get to the other side!"
+Human: What is my name?
+AI:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'Your name is Łukasz, as you mentioned earlier.'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(memory.<span class="bu">buffer</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Human: Hi, my name is Łukasz
+AI: Hello Łukasz, it's nice to meet you! My name is AI. How can I assist you today?
+Human: What is the best joke ever?
+AI: That's a subjective question, as humor is different for everyone. However, one of the most popular jokes of all time is "Why did the chicken cross the road? To get to the other side!"
+Human: What is my name?
+AI: Your name is Łukasz, as you mentioned earlier.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': 'Human: Hi, my name is Łukasz\nAI: Hello Łukasz, it\'s nice to meet you! My name is AI. How can I assist you today?\nHuman: What is the best joke ever?\nAI: That\'s a subjective question, as humor is different for everyone. However, one of the most popular jokes of all time is "Why did the chicken cross the road? To get to the other side!"\nHuman: What is my name?\nAI: Your name is Łukasz, as you mentioned earlier.'}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferMemory()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Hi Joey!"</span>}, </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"How you doin'?"</span>}</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(memory.<span class="bu">buffer</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Human: Hi Joey!
+AI: How you doin'?</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': "Human: Hi Joey!\nAI: How you doin'?"}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Awesome bro!"</span>}, </span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"Do want a sandwich with salami?"</span>}</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': "Human: Hi Joey!\nAI: How you doin'?\nHuman: Awesome bro!\nAI: Do want a sandwich with salami?"}</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conversationbufferwindowmemory" class="level2">
+<h2 class="anchored" data-anchor-id="conversationbufferwindowmemory">ConversationBufferWindowMemory</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferWindowMemory</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferWindowMemory(k<span class="op">=</span><span class="dv">1</span>)               </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Hi Joey!"</span>}, </span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"How you doin'?"</span>}</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Awesome bro!"</span>}, </span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"Do want a sandwich with salami?"</span>}</span>
+<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': 'Human: Awesome bro!\nAI: Do want a sandwich with salami?'}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="fl">0.0</span>)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferWindowMemory(k<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>conversation <span class="op">=</span> ConversationChain(</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>llm, </span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> memory,</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">False</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Hi, my name is Lukasz"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>"Hello Lukasz, it's nice to meet you. My name is AI. How can I assist you today?"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Placeholder for a very, very important question"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>"I'm sorry, Lukasz, but I'm not sure I understand your question. Could you please provide me with more context or details so I can better assist you?"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"What is my name?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Your name is Lukasz.'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Have I been asking for placeholders?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>"I'm sorry, I don't have enough context to answer that question. Could you please provide more information?"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Nevermind! Do you know me?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrying langchain.chat_models.openai.ChatOpenAI.completion_with_retry.&lt;locals&gt;._completion_with_retry in 1.0 seconds as it raised ServiceUnavailableError: The server is overloaded or not ready yet..
+Retrying langchain.chat_models.openai.ChatOpenAI.completion_with_retry.&lt;locals&gt;._completion_with_retry in 2.0 seconds as it raised RateLimitError: That model is currently overloaded with other requests. You can retry your request, or contact us through our help center at help.openai.com if the error persists. (Please include the request ID 97b35ddd62d28fcf0b82fc4ccf4d093b in your message.).</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>"Yes, I have access to information about you based on our interactions. I know your name, some of your preferences, and some of the topics we have discussed in the past. However, I don't have access to your personal information or anything that you haven't shared with me."</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"Do you remember my name?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'Yes, your name is [insert name here].'</code></pre>
+</div>
+</div>
+<p>Welcom to the workshop lead by <code>[insert name here]</code> :)</p>
+</section>
+<section id="conversationtokenbuffermemory" class="level2">
+<h2 class="anchored" data-anchor-id="conversationtokenbuffermemory">ConversationTokenBufferMemory</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationTokenBufferMemory</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.llms <span class="im">import</span> OpenAI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>llm <span class="op">=</span> ChatOpenAI(temperature<span class="op">=</span><span class="fl">0.0</span>)</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationTokenBufferMemory(llm<span class="op">=</span>llm, max_token_limit<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Hi Joey!"</span>}, </span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"How you doin'?"</span>}</span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Awesome bro!"</span>}, </span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"Do want a sandwich with salami?"</span>}</span>
+<span id="cb83-12"><a href="#cb83-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb83-13"><a href="#cb83-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-14"><a href="#cb83-14" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': 'Human: Awesome bro!\nAI: Do want a sandwich with salami?'}</code></pre>
+</div>
+</div>
+</section>
+<section id="conversationsummarymemory" class="level2">
+<h2 class="anchored" data-anchor-id="conversationsummarymemory">ConversationSummaryMemory</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationSummaryBufferMemory</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>chatbot_system_prompt <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a><span class="st">Jesteś asystentem AI Szkoły Letniej, pomagasz uczestnikom wybrać najlepsze warsztaty. </span></span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a><span class="st">###</span></span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a><span class="st">Workshops:</span></span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a><span class="st">Bartosz Kolasa  MLOps   Systematizing a research code aka introduction to Kedro framework   During the workshops I would like to present the Kedro framework which is a MLOps tool to systematize any data science research project into a pipeline represented by a DAG (directed acyclic graph). Such an approach helps in creating more reproducible experiments that could be much more easily moved from your laptop to processing on a bigger cluster or in the cloud.</span></span>
+<span id="cb86-8"><a href="#cb86-8" aria-hidden="true" tabindex="-1"></a><span class="st">Łukasz Augustyniak  Prompt Engineering  Large Language Models - from Demo to Production "In this interactive workshop, we will delve into the fascinating world of large language models and explore their potential in revolutionizing various industries. I will guide participants through the process of transforming cutting-edge demos into scalable production solutions.</span></span>
+<span id="cb86-9"><a href="#cb86-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-10"><a href="#cb86-10" aria-hidden="true" tabindex="-1"></a><span class="st">Participants will gain hands-on experience by working on practical exercises that demonstrate how to fine-tune these models for specific tasks. Additionally, we'll cover best practices for deploying these models at scale while maintaining efficiency and performance.</span></span>
+<span id="cb86-11"><a href="#cb86-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-12"><a href="#cb86-12" aria-hidden="true" tabindex="-1"></a><span class="st">Throughout the workshop, attendees can expect engaging discussions about ethical considerations surrounding AI usage as well as insights into future developments within the field. By the end of this session, participants should have a solid understanding of how to harness the power of large language models effectively in order to drive innovation across various domains."</span></span>
+<span id="cb86-13"><a href="#cb86-13" aria-hidden="true" tabindex="-1"></a><span class="st">Arkadiusz Janz  Generative Language Models  Training Large Language Models with Reinforcement Learning from Human Feedback (RLHF)   A comprehensive introduction to Generative Language Models and Reinforcement Learning from Human Feedback: a novel approach in training Large Language Models for downstream tasks. This workshop is designed to impart an in-depth understanding of fundamental concepts of Reinforcement Learning (states, actions, rewards, value functions, policies) and Generative Language Models. A theoretical comparison with Supervised Learning paradigm will be discussed, along with the advantages RLHF optimization brings to reducing biases, and overcoming sparse reward issues. Participants will engage in hands-on activities involving RLHF training with simplified models, hyperparameter tuning of RLHF models, and diving into existing RLHF programming frameworks.</span></span>
+<span id="cb86-14"><a href="#cb86-14" aria-hidden="true" tabindex="-1"></a><span class="st">Konrad Wojtasik Information Retrieval   Introduction to modern information retrieval    Information retrieval plays a crucial role in modern systems, finding applications across diverse domains and industries. Its relevance spans from web search and recommendation systems to product search and health and legal information retrieval. Information retrieval is not only essential for traditional search applications but also plays a vital role in retrieval-augmented Question Answering systems. Additionally, it serves as a valuable mechanism to prevent Large Language Models from generating incorrect or hallucinated information. Moreover, it ensures that their knowledge remains accurate and up-to-date. During this workshop, participants will have the opportunity to explore and understand current state-of-the-art models used in information retrieval. They will gain insights into the strengths and limitations of these models. Furthermore, the workshop will focus on setting up an information retrieval pipeline, allowing participants to gain hands-on experience in building and implementing such systems. Additionally, participants will learn how to effectively measure and evaluate the performance of their information retrieval pipelines.</span></span>
+<span id="cb86-15"><a href="#cb86-15" aria-hidden="true" tabindex="-1"></a><span class="st">Mateusz Gniewkowski XAI Model Agnostic Explanations Techniques  "Machine learning models can often be complex and difficult to understand, therefore it is important to be able to explain how these models work, as they are increasingly used in a wide range of industries and applications.</span></span>
+<span id="cb86-16"><a href="#cb86-16" aria-hidden="true" tabindex="-1"></a><span class="st">The workshop will start by discussing some basic ways to explain machine learning models, such as using feature importance measures, decision trees, and visualization tools. However, the focus will then shift to model-agnostic techniques, which can be applied to any type of machine learning model.</span></span>
+<span id="cb86-17"><a href="#cb86-17" aria-hidden="true" tabindex="-1"></a><span class="st">The techniques that will be covered in the workshop include LIME (Local Interpretable Model-Agnostic Explanations) and SHAP (SHapley Additive exPlanations). These libraries are designed to provide more transparent and understandable explanations for machine learning models, even when the models themselves are complex or difficult to interpret."</span></span>
+<span id="cb86-18"><a href="#cb86-18" aria-hidden="true" tabindex="-1"></a><span class="st">Piotr Bielak    Representation learning Introduction to graph representation learning   In recent years, representation learning has attracted much attention both in the research community and industrial applications. Learning representations for graphs is especially challenging due to the relational nature of such data, i.e., one must reflect both the rich attribute space and graph structure in the embedding vectors. During this workshop, I will show how to use the PyTorch-Geometric library to easily build graph representations and solve a variety of applications. We will explore node, edge and graph-level representations through the prism of their associated downstream tasks and corresponding deep learning models (Graph Neural Networks).</span></span>
+<span id="cb86-19"><a href="#cb86-19" aria-hidden="true" tabindex="-1"></a><span class="st">Denis Janiak    Representation learning, Bayesian methods   Does Representation Know What It Doesn't Know?  "Uncertainty estimation is a critical aspect of artificial intelligence systems, enabling them to quantify their confidence and provide reliable predictions. However, accurately assessing uncertainty becomes increasingly challenging when AI models encounter scenarios outside their training data distribution. This workshop, titled ""Does Representation Know What It Doesn't Know?,"" aims to explore the concept of uncertainty estimation in AI systems and delve into the question of whether representations within these systems possess the ability to recognize their own limitations. During the workshop, we will investigate the various techniques and methodologies employed in uncertainty estimation, such as Bayesian approaches and deep learning-based techniques. We will analyze the strengths and limitations of these approaches and discuss their implications for real-world applications.</span></span>
+<span id="cb86-20"><a href="#cb86-20" aria-hidden="true" tabindex="-1"></a><span class="st">Furthermore, the workshop will delve into the concept of representation learning and its impact on uncertainty estimation. We will examine whether AI systems can effectively recognize when they are faced with novel or out-of-distribution inputs. Additionally, we will explore approaches to measure and improve representation awareness, enabling models to identify areas of uncertainty and seek further guidance or human intervention when necessary.</span></span>
+<span id="cb86-21"><a href="#cb86-21" aria-hidden="true" tabindex="-1"></a><span class="st">By the end of the workshop, attendees will gain a deeper understanding of the state-of-the-art techniques for uncertainty estimation and its importance in building robust AI systems. They will also gain insights into the fundamental question of whether representations within AI models possess the capability to identify areas of uncertainty and adapt accordingly. "</span></span>
+<span id="cb86-22"><a href="#cb86-22" aria-hidden="true" tabindex="-1"></a><span class="st">Albert Sawczyn  Representation learning Knowledge Graph Representation Learning Knowledge graphs have emerged as powerful tools for organizing and representing structured information in various domains, enabling efficient data integration, inference, and knowledge discovery. Knowledge graph representation learning aims to capture the rich semantic relationships and contextual information within knowledge graphs, facilitating effective knowledge inference and reasoning. This workshop aims to introduce the fundamental challenge of learning representations for knowledge graphs and highlight their significance in practical applications. Practical demonstrations will show how to easily learn representation using the PyKEEN library and how to apply it to a real-world NLP problem. </span></span>
+<span id="cb86-23"><a href="#cb86-23" aria-hidden="true" tabindex="-1"></a><span class="st">Jakub Binkowski Representation learning Generative models for graphs    After many advancements in the realm of Graph Representation Learning, graph generation gained much attention due to its vast range of applications (e.g. drug design). Nonetheless, due to the nature of graph data, this task is very difficult and further breakthroughs still need to be discovered. Hence the workshop will provide a ground understanding of the selected methods and problems associated with graph generation. During the workshop, I will show the most important methods in theory and practice. I will show how to implement these methods leveraging Pytorch Geometric library. We will go through training and evaluation using common datasets.</span></span>
+<span id="cb86-24"><a href="#cb86-24" aria-hidden="true" tabindex="-1"></a><span class="st">Kamil Kanclerz  NLP, Personalization    Subjective problems in NLP  "A unified gold standard commonly exploited in natural language processing (NLP) tasks requires high inter-annotator agreement. However, there are many subjective problems that should respect users’ individual points of view. At the first glance, disagreement and non-regular annotations can be seen as noise that drags the performance of NLP task detection models down. As we know, the ability to think and perceive the environment differently is natural to humans as such. Therefore, it is crucial to include this observation while building predictive models in order to reflect the setup close to reality. As simple as this may seem, it is important to keep in mind that the key ideas behind NLP phenomenon detection, such as gold standard, agreement coefficients, or the evaluation itself need to be thoroughly analyzed and reconsidered especially for subjective NLP tasks like hate speech detection, prediction of emotional elicitation, sense of humor, sarcasm detection, or even sentiment analysis. Such NLP tasks come with each complexity of their own, especially within the aspect of subjectivity, therefore making them difficult to solve compared to non-subjective tasks.</span></span>
+<span id="cb86-25"><a href="#cb86-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-26"><a href="#cb86-26" aria-hidden="true" tabindex="-1"></a><span class="st">During the workshop, the participants will be introduced to the novel deep neural architectures leveraging various user representations. Moreover, the user-centered data setups will be explained in comparison to their ground truth equivalents. Additionally, the personalized evaluation techniques will be presented as the methods providing further insight into model ability to understand differences between various user perspectives."</span></span>
+<span id="cb86-27"><a href="#cb86-27" aria-hidden="true" tabindex="-1"></a><span class="st">Mateusz Wójcik  MLOps, continual learning   Continual Learning - techniques and applications    "Recently, neural architectures have become effective and widely used in various domains. The parameter optimization process based on gradient descent works well when the data set is sufficiently large and fully available during the training process. But what if we don’t have all the data available during training? What if the number of classes increase? As a result, we have to manually retrain the models from scratch ensuing a time-consuming process.</span></span>
+<span id="cb86-28"><a href="#cb86-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-29"><a href="#cb86-29" aria-hidden="true" tabindex="-1"></a><span class="st">During this workshop you will learn about the Continual Learning and its applications. We will discuss the catastrophic forgetting and explore various techniques that trying to prevent it starting from simple neural networks up to modern LLMs. As a result, you will understand why we need Continual Learning and how to apply it to existing or new models."</span></span>
+<span id="cb86-30"><a href="#cb86-30" aria-hidden="true" tabindex="-1"></a><span class="st">Patryk Wielopolski  Generative Models   Conditional object generation using pre-trained models and plug-in networks Generative models have gained many Machine Learning practitioners’ attention in the last years resulting in models such as StyleGAN for human face generation or PointFlow for the 3D point cloud generation. However, by default, we cannot control its sampling process, i.e., we cannot generate a sample with a specific set of attributes. The current approach is model retraining with additional inputs and different architecture, which requires time and computational resources. During this hands-on workshop we will go through a method which enables to generate objects with a given set of attributes without retraining the base model. For this purpose, we will utilize the normalizing flow models - Conditional Masked Autoregressive Flow and Conditional Real NVP, and plug-in networks resulting in the Flow Plugin Network.</span></span>
+<span id="cb86-31"><a href="#cb86-31" aria-hidden="true" tabindex="-1"></a><span class="st">Michał Czuba    Network Science Complex networks part II - spreading processes  Two years ago, the world faced SARS-CoV-2 and the biggest pandemic in the century. Since last winter, with an incursion of Russian troops in Ukraine, all civilised countries have been subjected to misinformation. This year with an election in Poland, a festival of campaign promises has started. The nature of these three examples is complex and hard to analyse. Nonetheless, one of the approaches leading to understanding and controlling such processes is a network simulation. During this workshop, you will learn an essential toolkit to model and analyse spreading phenomena in complex networks. You will understand how to simulate such processes as epidemics or opinion dynamics and how to identify key spreaders of fake news or the most fragile individuals to be vaccinated in the first place.</span></span>
+<span id="cb86-32"><a href="#cb86-32" aria-hidden="true" tabindex="-1"></a><span class="st">Mateusz Nurek   Network Science Complex networks part I - social network analysis   Computational network science is a field of artificial intelligence that analyses graphs in applied problems involving social, transportation, epidemiological or energy issues. This workshop will teach you fundamental tools and techniques for analysing this data type. Based on a case study - the history of communication in a particular company, we will solve the problem of optimising the structure of its organisation. We will detect natural teams from employees most intensively working together. We will also identify key personnel, i.e. employees whose loss can cause communication paralysis.</span></span>
+<span id="cb86-33"><a href="#cb86-33" aria-hidden="true" tabindex="-1"></a><span class="st">Damian Serwata  Network Science "Complex networks I - social network analysis</span></span>
+<span id="cb86-34"><a href="#cb86-34" aria-hidden="true" tabindex="-1"></a><span class="st">Complex networks II - spreading processes"  </span></span>
+<span id="cb86-35"><a href="#cb86-35" aria-hidden="true" tabindex="-1"></a><span class="st">Michał Karol    ML w medycynie  Computer Vision for medical image processing    Computer vision has emerged as a revolutionary technology in the medical field, bringing significant transformations in various aspects of healthcare. Its application in clinical practice has paved the way for improved diagnostics, more accurate disease detection, and enhanced treatment planning. The objective of this workshop is to bring comprehensive understanding of the impact of computer vision in clinical practice. Participants will gain insights into how this technology is reshaping healthcare and improving patient outcomes. By exploring the latest advancements in certified medical systems, attendees will learn about the integration of computer vision into existing medical frameworks and protocols. Moreover, the workshop will delve into current research areas within computer vision in medicine. Participants will be introduced to cutting-edge studies and ongoing projects that aim to further enhance the capabilities of computer vision in the healthcare domain. In the second part of the workshop, there will be an interactive session focused on implementing classification and segmentation networks using the JAX framework and the Flax library. </span></span>
+<span id="cb86-36"><a href="#cb86-36" aria-hidden="true" tabindex="-1"></a><span class="st">Piotr Kawa  Analiza dźwięku (TTS, DF)   Generating audio DeepFakes and how to detect them   Recent advances in audio processing and speech synthesis allow the creation of realistic speech - DeepFakes. Despite a number of advantages, this technology poses a threat through its potential applications including disinformation spreading. Participants in this workshop will learn about the latest technologies for speech generation and then how to defend themselves against the malicious use of this technology using state-of-the-art DeepFake detection techniques.</span></span>
+<span id="cb86-37"><a href="#cb86-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-38"><a href="#cb86-38" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationSummaryBufferMemory(llm<span class="op">=</span>llm, max_token_limit<span class="op">=</span><span class="dv">2000</span>)</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Cześć"</span>}, </span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="st">"Cześć, jestem asystentem studenta na szkole letniej AI Tech. Pomogę znaleźć Ci odpowiednie warsztaty i wykłady."</span>}</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>memory.save_context(</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"input"</span>: <span class="st">"Szukam warsztatów"</span>},</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"output"</span>: <span class="ss">f"Pewnie chodzi Ci o te super warsztaty na szkole letniej AI tech? Na jaki temat szukasz warsztatów? Możliwe to: </span><span class="sc">{</span>chatbot_system_prompt<span class="sc">}</span><span class="ss">"</span>}</span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': 'System: The human greets the AI in Polish and the AI responds, introducing itself as an assistant for the AI Tech summer school. The human expresses interest in workshops and the AI provides a list of available workshops with brief descriptions. The workshops cover topics such as MLOps, large language models, generative language models, information retrieval, model agnostic explanation techniques, representation learning, Bayesian methods, NLP, personalization, continual learning, generative models, network science, and computer vision for medical image processing. The AI also mentions a workshop on generating audio DeepFakes and how to detect them.'}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>conversation <span class="op">=</span> ConversationChain(</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>llm, </span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>    memory <span class="op">=</span> memory,</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span></span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"jest coś z Large language models?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+System: The human greets the AI in Polish and the AI responds, introducing itself as an assistant for the AI Tech summer school. The human expresses interest in workshops and the AI provides a list of available workshops with brief descriptions. The workshops cover topics such as MLOps, large language models, generative language models, information retrieval, model agnostic explanation techniques, representation learning, Bayesian methods, NLP, personalization, continual learning, generative models, network science, and computer vision for medical image processing. The AI also mentions a workshop on generating audio DeepFakes and how to detect them.
+Human: jest coś z Large language models?
+AI:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'Tak, mamy warsztat dotyczący dużych modeli językowych. W tym warsztacie uczestnicy będą mieli okazję nauczyć się, jak budować i trenować modele językowe o dużej skali, takie jak GPT-3. Będziemy omawiać różne techniki i narzędzia, które pomogą w tworzeniu i optymalizacji tych modeli. Warsztat ten będzie prowadzony przez doświadczonych specjalistów z dziedziny uczenia maszynowego i będzie składał się z wykładów, ćwiczeń praktycznych i dyskusji.'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>conversation.predict(<span class="bu">input</span><span class="op">=</span><span class="st">"a kto go prowadzi?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+Current conversation:
+System: The human greets the AI in Polish and the AI responds, introducing itself as an assistant for the AI Tech summer school. The human expresses interest in workshops and the AI provides a list of available workshops with brief descriptions. The workshops cover topics such as MLOps, large language models, generative language models, information retrieval, model agnostic explanation techniques, representation learning, Bayesian methods, NLP, personalization, continual learning, generative models, network science, and computer vision for medical image processing. The AI also mentions a workshop on generating audio DeepFakes and how to detect them.
+Human: jest coś z Large language models?
+AI: Tak, mamy warsztat dotyczący dużych modeli językowych. W tym warsztacie uczestnicy będą mieli okazję nauczyć się, jak budować i trenować modele językowe o dużej skali, takie jak GPT-3. Będziemy omawiać różne techniki i narzędzia, które pomogą w tworzeniu i optymalizacji tych modeli. Warsztat ten będzie prowadzony przez doświadczonych specjalistów z dziedziny uczenia maszynowego i będzie składał się z wykładów, ćwiczeń praktycznych i dyskusji.
+Human: a kto go prowadzi?
+AI:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>'Warsztat dotyczący dużych modeli językowych będzie prowadzony przez dr. Johna Smitha, który jest ekspertem w dziedzinie uczenia maszynowego i ma wiele lat doświadczenia w pracy z dużymi modelami językowymi. Dr. Smith jest autorem wielu publikacji naukowych na ten temat i jest znany z prowadzenia interaktywnych i praktycznych warsztatów.'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'history': 'System: The human greets the AI in Polish and the AI responds, introducing itself as an assistant for the AI Tech summer school. The human expresses interest in workshops and the AI provides a list of available workshops with brief descriptions. The workshops cover topics such as MLOps, large language models, generative language models, information retrieval, model agnostic explanation techniques, representation learning, Bayesian methods, NLP, personalization, continual learning, generative models, network science, and computer vision for medical image processing. The AI also mentions a workshop on generating audio DeepFakes and how to detect them.\nHuman: jest coś z Large language models?\nAI: Tak, mamy warsztat dotyczący dużych modeli językowych. W tym warsztacie uczestnicy będą mieli okazję nauczyć się, jak budować i trenować modele językowe o dużej skali, takie jak GPT-3. Będziemy omawiać różne techniki i narzędzia, które pomogą w tworzeniu i optymalizacji tych modeli. Warsztat ten będzie prowadzony przez doświadczonych specjalistów z dziedziny uczenia maszynowego i będzie składał się z wykładów, ćwiczeń praktycznych i dyskusji.\nHuman: a kto go prowadzi?\nAI: Warsztat dotyczący dużych modeli językowych będzie prowadzony przez dr. Johna Smitha, który jest ekspertem w dziedzinie uczenia maszynowego i ma wiele lat doświadczenia w pracy z dużymi modelami językowymi. Dr. Smith jest autorem wielu publikacji naukowych na ten temat i jest znany z prowadzenia interaktywnych i praktycznych warsztatów.'}</code></pre>
+</div>
+</div>
+<p>Where is our workshop list?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.memory <span class="im">import</span> ConversationBufferMemory</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain <span class="im">import</span> OpenAI, LLMChain, PromptTemplate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>template <span class="op">=</span> chatbot_system_prompt <span class="op">+</span> <span class="st">"""</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="st">Historia Rozmowy:</span></span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="sc">{chat_history}</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a><span class="st">Student: </span><span class="sc">{human_input}</span></span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="st">Asystent:"""</span></span>
+<span id="cb98-7"><a href="#cb98-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-8"><a href="#cb98-8" aria-hidden="true" tabindex="-1"></a>prompt <span class="op">=</span> PromptTemplate(</span>
+<span id="cb98-9"><a href="#cb98-9" aria-hidden="true" tabindex="-1"></a>    input_variables<span class="op">=</span>[<span class="st">"chat_history"</span>, <span class="st">"human_input"</span>], template<span class="op">=</span>template</span>
+<span id="cb98-10"><a href="#cb98-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb98-11"><a href="#cb98-11" aria-hidden="true" tabindex="-1"></a>memory <span class="op">=</span> ConversationBufferMemory(memory_key<span class="op">=</span><span class="st">"chat_history"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>llm_chain <span class="op">=</span> LLMChain(</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>OpenAI(),</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>    prompt<span class="op">=</span>prompt,</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>    memory<span class="op">=</span>memory,</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>memory.load_memory_variables({})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'chat_history': ''}</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>llm_chain.predict(human_input<span class="op">=</span><span class="st">"jest coś z Large language models?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+
+###
+
+Workshops:
+Bartosz Kolasa  MLOps   Systematizing a research code aka introduction to Kedro framework   During the workshops I would like to present the Kedro framework which is a MLOps tool to systematize any data science research project into a pipeline represented by a DAG (directed acyclic graph). Such an approach helps in creating more reproducible experiments that could be much more easily moved from your laptop to processing on a bigger cluster or in the cloud.
+Łukasz Augustyniak  Prompt Engineering  Large Language Models - from Demo to Production "In this interactive workshop, we will delve into the fascinating world of large language models and explore their potential in revolutionizing various industries. I will guide participants through the process of transforming cutting-edge demos into scalable production solutions.
+
+Participants will gain hands-on experience by working on practical exercises that demonstrate how to fine-tune these models for specific tasks. Additionally, we'll cover best practices for deploying these models at scale while maintaining efficiency and performance.
+
+Throughout the workshop, attendees can expect engaging discussions about ethical considerations surrounding AI usage as well as insights into future developments within the field. By the end of this session, participants should have a solid understanding of how to harness the power of large language models effectively in order to drive innovation across various domains."
+Arkadiusz Janz  Generative Language Models  Training Large Language Models with Reinforcement Learning from Human Feedback (RLHF)   A comprehensive introduction to Generative Language Models and Reinforcement Learning from Human Feedback: a novel approach in training Large Language Models for downstream tasks. This workshop is designed to impart an in-depth understanding of fundamental concepts of Reinforcement Learning (states, actions, rewards, value functions, policies) and Generative Language Models. A theoretical comparison with Supervised Learning paradigm will be discussed, along with the advantages RLHF optimization brings to reducing biases, and overcoming sparse reward issues. Participants will engage in hands-on activities involving RLHF training with simplified models, hyperparameter tuning of RLHF models, and diving into existing RLHF programming frameworks.
+Konrad Wojtasik Information Retrieval   Introduction to modern information retrieval    Information retrieval plays a crucial role in modern systems, finding applications across diverse domains and industries. Its relevance spans from web search and recommendation systems to product search and health and legal information retrieval. Information retrieval is not only essential for traditional search applications but also plays a vital role in retrieval-augmented Question Answering systems. Additionally, it serves as a valuable mechanism to prevent Large Language Models from generating incorrect or hallucinated information. Moreover, it ensures that their knowledge remains accurate and up-to-date. During this workshop, participants will have the opportunity to explore and understand current state-of-the-art models used in information retrieval. They will gain insights into the strengths and limitations of these models. Furthermore, the workshop will focus on setting up an information retrieval pipeline, allowing participants to gain hands-on experience in building and implementing such systems. Additionally, participants will learn how to effectively measure and evaluate the performance of their information retrieval pipelines.
+Mateusz Gniewkowski XAI Model Agnostic Explanations Techniques  "Machine learning models can often be complex and difficult to understand, therefore it is important to be able to explain how these models work, as they are increasingly used in a wide range of industries and applications.
+The workshop will start by discussing some basic ways to explain machine learning models, such as using feature importance measures, decision trees, and visualization tools. However, the focus will then shift to model-agnostic techniques, which can be applied to any type of machine learning model.
+The techniques that will be covered in the workshop include LIME (Local Interpretable Model-Agnostic Explanations) and SHAP (SHapley Additive exPlanations). These libraries are designed to provide more transparent and understandable explanations for machine learning models, even when the models themselves are complex or difficult to interpret."
+Piotr Bielak    Representation learning Introduction to graph representation learning   In recent years, representation learning has attracted much attention both in the research community and industrial applications. Learning representations for graphs is especially challenging due to the relational nature of such data, i.e., one must reflect both the rich attribute space and graph structure in the embedding vectors. During this workshop, I will show how to use the PyTorch-Geometric library to easily build graph representations and solve a variety of applications. We will explore node, edge and graph-level representations through the prism of their associated downstream tasks and corresponding deep learning models (Graph Neural Networks).
+Denis Janiak    Representation learning, Bayesian methods   Does Representation Know What It Doesn't Know?  "Uncertainty estimation is a critical aspect of artificial intelligence systems, enabling them to quantify their confidence and provide reliable predictions. However, accurately assessing uncertainty becomes increasingly challenging when AI models encounter scenarios outside their training data distribution. This workshop, titled ""Does Representation Know What It Doesn't Know?,"" aims to explore the concept of uncertainty estimation in AI systems and delve into the question of whether representations within these systems possess the ability to recognize their own limitations. During the workshop, we will investigate the various techniques and methodologies employed in uncertainty estimation, such as Bayesian approaches and deep learning-based techniques. We will analyze the strengths and limitations of these approaches and discuss their implications for real-world applications.
+Furthermore, the workshop will delve into the concept of representation learning and its impact on uncertainty estimation. We will examine whether AI systems can effectively recognize when they are faced with novel or out-of-distribution inputs. Additionally, we will explore approaches to measure and improve representation awareness, enabling models to identify areas of uncertainty and seek further guidance or human intervention when necessary.
+By the end of the workshop, attendees will gain a deeper understanding of the state-of-the-art techniques for uncertainty estimation and its importance in building robust AI systems. They will also gain insights into the fundamental question of whether representations within AI models possess the capability to identify areas of uncertainty and adapt accordingly. "
+Albert Sawczyn  Representation learning Knowledge Graph Representation Learning Knowledge graphs have emerged as powerful tools for organizing and representing structured information in various domains, enabling efficient data integration, inference, and knowledge discovery. Knowledge graph representation learning aims to capture the rich semantic relationships and contextual information within knowledge graphs, facilitating effective knowledge inference and reasoning. This workshop aims to introduce the fundamental challenge of learning representations for knowledge graphs and highlight their significance in practical applications. Practical demonstrations will show how to easily learn representation using the PyKEEN library and how to apply it to a real-world NLP problem. 
+Jakub Binkowski Representation learning Generative models for graphs    After many advancements in the realm of Graph Representation Learning, graph generation gained much attention due to its vast range of applications (e.g. drug design). Nonetheless, due to the nature of graph data, this task is very difficult and further breakthroughs still need to be discovered. Hence the workshop will provide a ground understanding of the selected methods and problems associated with graph generation. During the workshop, I will show the most important methods in theory and practice. I will show how to implement these methods leveraging Pytorch Geometric library. We will go through training and evaluation using common datasets.
+Kamil Kanclerz  NLP, Personalization    Subjective problems in NLP  "A unified gold standard commonly exploited in natural language processing (NLP) tasks requires high inter-annotator agreement. However, there are many subjective problems that should respect users’ individual points of view. At the first glance, disagreement and non-regular annotations can be seen as noise that drags the performance of NLP task detection models down. As we know, the ability to think and perceive the environment differently is natural to humans as such. Therefore, it is crucial to include this observation while building predictive models in order to reflect the setup close to reality. As simple as this may seem, it is important to keep in mind that the key ideas behind NLP phenomenon detection, such as gold standard, agreement coefficients, or the evaluation itself need to be thoroughly analyzed and reconsidered especially for subjective NLP tasks like hate speech detection, prediction of emotional elicitation, sense of humor, sarcasm detection, or even sentiment analysis. Such NLP tasks come with each complexity of their own, especially within the aspect of subjectivity, therefore making them difficult to solve compared to non-subjective tasks.
+
+During the workshop, the participants will be introduced to the novel deep neural architectures leveraging various user representations. Moreover, the user-centered data setups will be explained in comparison to their ground truth equivalents. Additionally, the personalized evaluation techniques will be presented as the methods providing further insight into model ability to understand differences between various user perspectives."
+Mateusz Wójcik  MLOps, continual learning   Continual Learning - techniques and applications    "Recently, neural architectures have become effective and widely used in various domains. The parameter optimization process based on gradient descent works well when the data set is sufficiently large and fully available during the training process. But what if we don’t have all the data available during training? What if the number of classes increase? As a result, we have to manually retrain the models from scratch ensuing a time-consuming process.
+
+During this workshop you will learn about the Continual Learning and its applications. We will discuss the catastrophic forgetting and explore various techniques that trying to prevent it starting from simple neural networks up to modern LLMs. As a result, you will understand why we need Continual Learning and how to apply it to existing or new models."
+Patryk Wielopolski  Generative Models   Conditional object generation using pre-trained models and plug-in networks Generative models have gained many Machine Learning practitioners’ attention in the last years resulting in models such as StyleGAN for human face generation or PointFlow for the 3D point cloud generation. However, by default, we cannot control its sampling process, i.e., we cannot generate a sample with a specific set of attributes. The current approach is model retraining with additional inputs and different architecture, which requires time and computational resources. During this hands-on workshop we will go through a method which enables to generate objects with a given set of attributes without retraining the base model. For this purpose, we will utilize the normalizing flow models - Conditional Masked Autoregressive Flow and Conditional Real NVP, and plug-in networks resulting in the Flow Plugin Network.
+Michał Czuba    Network Science Complex networks part II - spreading processes  Two years ago, the world faced SARS-CoV-2 and the biggest pandemic in the century. Since last winter, with an incursion of Russian troops in Ukraine, all civilised countries have been subjected to misinformation. This year with an election in Poland, a festival of campaign promises has started. The nature of these three examples is complex and hard to analyse. Nonetheless, one of the approaches leading to understanding and controlling such processes is a network simulation. During this workshop, you will learn an essential toolkit to model and analyse spreading phenomena in complex networks. You will understand how to simulate such processes as epidemics or opinion dynamics and how to identify key spreaders of fake news or the most fragile individuals to be vaccinated in the first place.
+Mateusz Nurek   Network Science Complex networks part I - social network analysis   Computational network science is a field of artificial intelligence that analyses graphs in applied problems involving social, transportation, epidemiological or energy issues. This workshop will teach you fundamental tools and techniques for analysing this data type. Based on a case study - the history of communication in a particular company, we will solve the problem of optimising the structure of its organisation. We will detect natural teams from employees most intensively working together. We will also identify key personnel, i.e. employees whose loss can cause communication paralysis.
+Damian Serwata  Network Science "Complex networks I - social network analysis
+Complex networks II - spreading processes"  
+Michał Karol    ML w medycynie  Computer Vision for medical image processing    Computer vision has emerged as a revolutionary technology in the medical field, bringing significant transformations in various aspects of healthcare. Its application in clinical practice has paved the way for improved diagnostics, more accurate disease detection, and enhanced treatment planning. The objective of this workshop is to bring comprehensive understanding of the impact of computer vision in clinical practice. Participants will gain insights into how this technology is reshaping healthcare and improving patient outcomes. By exploring the latest advancements in certified medical systems, attendees will learn about the integration of computer vision into existing medical frameworks and protocols. Moreover, the workshop will delve into current research areas within computer vision in medicine. Participants will be introduced to cutting-edge studies and ongoing projects that aim to further enhance the capabilities of computer vision in the healthcare domain. In the second part of the workshop, there will be an interactive session focused on implementing classification and segmentation networks using the JAX framework and the Flax library. 
+Piotr Kawa  Analiza dźwięku (TTS, DF)   Generating audio DeepFakes and how to detect them   Recent advances in audio processing and speech synthesis allow the creation of realistic speech - DeepFakes. Despite a number of advantages, this technology poses a threat through its potential applications including disinformation spreading. Participants in this workshop will learn about the latest technologies for speech generation and then how to defend themselves against the malicious use of this technology using state-of-the-art DeepFake detection techniques.
+
+
+
+Historia Rozmowy:
+
+Student: jest coś z Large language models?
+Asystent:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>' Tak, mamy kilka warsztatów dotyczących dużych językowych modeli. Zajrzyj do listy warsztatów, aby zobaczyć szczegóły: Łukasz Augustyniak ma warsztat pt. "Duże językowe modele - od demo do produkcji". Kamil Kanclerz ma warsztat pt. „Problem subiektywny w NLP”.'</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>llm_chain.predict(human_input<span class="op">=</span><span class="st">"Świetnie, jest coś jeszcze innego z NLP?"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+
+&gt; Entering new  chain...
+Prompt after formatting:
+
+###
+
+Workshops:
+Bartosz Kolasa  MLOps   Systematizing a research code aka introduction to Kedro framework   During the workshops I would like to present the Kedro framework which is a MLOps tool to systematize any data science research project into a pipeline represented by a DAG (directed acyclic graph). Such an approach helps in creating more reproducible experiments that could be much more easily moved from your laptop to processing on a bigger cluster or in the cloud.
+Łukasz Augustyniak  Prompt Engineering  Large Language Models - from Demo to Production "In this interactive workshop, we will delve into the fascinating world of large language models and explore their potential in revolutionizing various industries. I will guide participants through the process of transforming cutting-edge demos into scalable production solutions.
+
+Participants will gain hands-on experience by working on practical exercises that demonstrate how to fine-tune these models for specific tasks. Additionally, we'll cover best practices for deploying these models at scale while maintaining efficiency and performance.
+
+Throughout the workshop, attendees can expect engaging discussions about ethical considerations surrounding AI usage as well as insights into future developments within the field. By the end of this session, participants should have a solid understanding of how to harness the power of large language models effectively in order to drive innovation across various domains."
+Arkadiusz Janz  Generative Language Models  Training Large Language Models with Reinforcement Learning from Human Feedback (RLHF)   A comprehensive introduction to Generative Language Models and Reinforcement Learning from Human Feedback: a novel approach in training Large Language Models for downstream tasks. This workshop is designed to impart an in-depth understanding of fundamental concepts of Reinforcement Learning (states, actions, rewards, value functions, policies) and Generative Language Models. A theoretical comparison with Supervised Learning paradigm will be discussed, along with the advantages RLHF optimization brings to reducing biases, and overcoming sparse reward issues. Participants will engage in hands-on activities involving RLHF training with simplified models, hyperparameter tuning of RLHF models, and diving into existing RLHF programming frameworks.
+Konrad Wojtasik Information Retrieval   Introduction to modern information retrieval    Information retrieval plays a crucial role in modern systems, finding applications across diverse domains and industries. Its relevance spans from web search and recommendation systems to product search and health and legal information retrieval. Information retrieval is not only essential for traditional search applications but also plays a vital role in retrieval-augmented Question Answering systems. Additionally, it serves as a valuable mechanism to prevent Large Language Models from generating incorrect or hallucinated information. Moreover, it ensures that their knowledge remains accurate and up-to-date. During this workshop, participants will have the opportunity to explore and understand current state-of-the-art models used in information retrieval. They will gain insights into the strengths and limitations of these models. Furthermore, the workshop will focus on setting up an information retrieval pipeline, allowing participants to gain hands-on experience in building and implementing such systems. Additionally, participants will learn how to effectively measure and evaluate the performance of their information retrieval pipelines.
+Mateusz Gniewkowski XAI Model Agnostic Explanations Techniques  "Machine learning models can often be complex and difficult to understand, therefore it is important to be able to explain how these models work, as they are increasingly used in a wide range of industries and applications.
+The workshop will start by discussing some basic ways to explain machine learning models, such as using feature importance measures, decision trees, and visualization tools. However, the focus will then shift to model-agnostic techniques, which can be applied to any type of machine learning model.
+The techniques that will be covered in the workshop include LIME (Local Interpretable Model-Agnostic Explanations) and SHAP (SHapley Additive exPlanations). These libraries are designed to provide more transparent and understandable explanations for machine learning models, even when the models themselves are complex or difficult to interpret."
+Piotr Bielak    Representation learning Introduction to graph representation learning   In recent years, representation learning has attracted much attention both in the research community and industrial applications. Learning representations for graphs is especially challenging due to the relational nature of such data, i.e., one must reflect both the rich attribute space and graph structure in the embedding vectors. During this workshop, I will show how to use the PyTorch-Geometric library to easily build graph representations and solve a variety of applications. We will explore node, edge and graph-level representations through the prism of their associated downstream tasks and corresponding deep learning models (Graph Neural Networks).
+Denis Janiak    Representation learning, Bayesian methods   Does Representation Know What It Doesn't Know?  "Uncertainty estimation is a critical aspect of artificial intelligence systems, enabling them to quantify their confidence and provide reliable predictions. However, accurately assessing uncertainty becomes increasingly challenging when AI models encounter scenarios outside their training data distribution. This workshop, titled ""Does Representation Know What It Doesn't Know?,"" aims to explore the concept of uncertainty estimation in AI systems and delve into the question of whether representations within these systems possess the ability to recognize their own limitations. During the workshop, we will investigate the various techniques and methodologies employed in uncertainty estimation, such as Bayesian approaches and deep learning-based techniques. We will analyze the strengths and limitations of these approaches and discuss their implications for real-world applications.
+Furthermore, the workshop will delve into the concept of representation learning and its impact on uncertainty estimation. We will examine whether AI systems can effectively recognize when they are faced with novel or out-of-distribution inputs. Additionally, we will explore approaches to measure and improve representation awareness, enabling models to identify areas of uncertainty and seek further guidance or human intervention when necessary.
+By the end of the workshop, attendees will gain a deeper understanding of the state-of-the-art techniques for uncertainty estimation and its importance in building robust AI systems. They will also gain insights into the fundamental question of whether representations within AI models possess the capability to identify areas of uncertainty and adapt accordingly. "
+Albert Sawczyn  Representation learning Knowledge Graph Representation Learning Knowledge graphs have emerged as powerful tools for organizing and representing structured information in various domains, enabling efficient data integration, inference, and knowledge discovery. Knowledge graph representation learning aims to capture the rich semantic relationships and contextual information within knowledge graphs, facilitating effective knowledge inference and reasoning. This workshop aims to introduce the fundamental challenge of learning representations for knowledge graphs and highlight their significance in practical applications. Practical demonstrations will show how to easily learn representation using the PyKEEN library and how to apply it to a real-world NLP problem. 
+Jakub Binkowski Representation learning Generative models for graphs    After many advancements in the realm of Graph Representation Learning, graph generation gained much attention due to its vast range of applications (e.g. drug design). Nonetheless, due to the nature of graph data, this task is very difficult and further breakthroughs still need to be discovered. Hence the workshop will provide a ground understanding of the selected methods and problems associated with graph generation. During the workshop, I will show the most important methods in theory and practice. I will show how to implement these methods leveraging Pytorch Geometric library. We will go through training and evaluation using common datasets.
+Kamil Kanclerz  NLP, Personalization    Subjective problems in NLP  "A unified gold standard commonly exploited in natural language processing (NLP) tasks requires high inter-annotator agreement. However, there are many subjective problems that should respect users’ individual points of view. At the first glance, disagreement and non-regular annotations can be seen as noise that drags the performance of NLP task detection models down. As we know, the ability to think and perceive the environment differently is natural to humans as such. Therefore, it is crucial to include this observation while building predictive models in order to reflect the setup close to reality. As simple as this may seem, it is important to keep in mind that the key ideas behind NLP phenomenon detection, such as gold standard, agreement coefficients, or the evaluation itself need to be thoroughly analyzed and reconsidered especially for subjective NLP tasks like hate speech detection, prediction of emotional elicitation, sense of humor, sarcasm detection, or even sentiment analysis. Such NLP tasks come with each complexity of their own, especially within the aspect of subjectivity, therefore making them difficult to solve compared to non-subjective tasks.
+
+During the workshop, the participants will be introduced to the novel deep neural architectures leveraging various user representations. Moreover, the user-centered data setups will be explained in comparison to their ground truth equivalents. Additionally, the personalized evaluation techniques will be presented as the methods providing further insight into model ability to understand differences between various user perspectives."
+Mateusz Wójcik  MLOps, continual learning   Continual Learning - techniques and applications    "Recently, neural architectures have become effective and widely used in various domains. The parameter optimization process based on gradient descent works well when the data set is sufficiently large and fully available during the training process. But what if we don’t have all the data available during training? What if the number of classes increase? As a result, we have to manually retrain the models from scratch ensuing a time-consuming process.
+
+During this workshop you will learn about the Continual Learning and its applications. We will discuss the catastrophic forgetting and explore various techniques that trying to prevent it starting from simple neural networks up to modern LLMs. As a result, you will understand why we need Continual Learning and how to apply it to existing or new models."
+Patryk Wielopolski  Generative Models   Conditional object generation using pre-trained models and plug-in networks Generative models have gained many Machine Learning practitioners’ attention in the last years resulting in models such as StyleGAN for human face generation or PointFlow for the 3D point cloud generation. However, by default, we cannot control its sampling process, i.e., we cannot generate a sample with a specific set of attributes. The current approach is model retraining with additional inputs and different architecture, which requires time and computational resources. During this hands-on workshop we will go through a method which enables to generate objects with a given set of attributes without retraining the base model. For this purpose, we will utilize the normalizing flow models - Conditional Masked Autoregressive Flow and Conditional Real NVP, and plug-in networks resulting in the Flow Plugin Network.
+Michał Czuba    Network Science Complex networks part II - spreading processes  Two years ago, the world faced SARS-CoV-2 and the biggest pandemic in the century. Since last winter, with an incursion of Russian troops in Ukraine, all civilised countries have been subjected to misinformation. This year with an election in Poland, a festival of campaign promises has started. The nature of these three examples is complex and hard to analyse. Nonetheless, one of the approaches leading to understanding and controlling such processes is a network simulation. During this workshop, you will learn an essential toolkit to model and analyse spreading phenomena in complex networks. You will understand how to simulate such processes as epidemics or opinion dynamics and how to identify key spreaders of fake news or the most fragile individuals to be vaccinated in the first place.
+Mateusz Nurek   Network Science Complex networks part I - social network analysis   Computational network science is a field of artificial intelligence that analyses graphs in applied problems involving social, transportation, epidemiological or energy issues. This workshop will teach you fundamental tools and techniques for analysing this data type. Based on a case study - the history of communication in a particular company, we will solve the problem of optimising the structure of its organisation. We will detect natural teams from employees most intensively working together. We will also identify key personnel, i.e. employees whose loss can cause communication paralysis.
+Damian Serwata  Network Science "Complex networks I - social network analysis
+Complex networks II - spreading processes"  
+Michał Karol    ML w medycynie  Computer Vision for medical image processing    Computer vision has emerged as a revolutionary technology in the medical field, bringing significant transformations in various aspects of healthcare. Its application in clinical practice has paved the way for improved diagnostics, more accurate disease detection, and enhanced treatment planning. The objective of this workshop is to bring comprehensive understanding of the impact of computer vision in clinical practice. Participants will gain insights into how this technology is reshaping healthcare and improving patient outcomes. By exploring the latest advancements in certified medical systems, attendees will learn about the integration of computer vision into existing medical frameworks and protocols. Moreover, the workshop will delve into current research areas within computer vision in medicine. Participants will be introduced to cutting-edge studies and ongoing projects that aim to further enhance the capabilities of computer vision in the healthcare domain. In the second part of the workshop, there will be an interactive session focused on implementing classification and segmentation networks using the JAX framework and the Flax library. 
+Piotr Kawa  Analiza dźwięku (TTS, DF)   Generating audio DeepFakes and how to detect them   Recent advances in audio processing and speech synthesis allow the creation of realistic speech - DeepFakes. Despite a number of advantages, this technology poses a threat through its potential applications including disinformation spreading. Participants in this workshop will learn about the latest technologies for speech generation and then how to defend themselves against the malicious use of this technology using state-of-the-art DeepFake detection techniques.
+
+
+
+Historia Rozmowy:
+Human: jest coś z Large language models?
+AI:  Tak, mamy kilka warsztatów dotyczących dużych językowych modeli. Zajrzyj do listy warsztatów, aby zobaczyć szczegóły: Łukasz Augustyniak ma warsztat pt. "Duże językowe modele - od demo do produkcji". Kamil Kanclerz ma warsztat pt. „Problem subiektywny w NLP”.
+Student: Świetnie, jest coś jeszcze innego z NLP?
+Asystent:
+
+&gt; Finished chain.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>' Tak, mamy kilka warsztatów związanych z NLP. Piotr Bielak ma warsztat pt. „Wprowadzenie do nowoczesnego wyszukiwania informacji”, a Denis Janiak ma warsztat pt. „Czy reprezentacja wie, czego nie wie? ".'</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
